@@ -37,7 +37,7 @@
 </html>
 <script src="js/jquery.min.js"></script>
 <script src="js/data.js"></script>
-<script src="js/module.js"></script>
+<script src="js/table.js"></script>
 <script>
 	$(function() {
 		// 初始化渲染页面
@@ -56,8 +56,8 @@
 
 		$(".inp1").on("click", function() {
 			var val;
-			if (empTest(classNames, ".err")) {
-				val = empTest(classNames, ".err");
+			if (empInput(classNames, ".err")) {
+				val = empInput(classNames, ".err");
 				val['id'] = getId(data) + 1;
 				data.push(val);
 				selFun([val], appendHtml, "tbody");
@@ -85,7 +85,7 @@
 		})
 		
 	//排序
-		function dealList(data,status,fun){
+		function rank(data,status,fun){
 			if(status){
 				var emp;
 				for(var i = 0;i< data.length;i++){
@@ -112,23 +112,36 @@
 		}
 		
 		$(".up").on("click",function(){
+			var ind = parseInt($("tr.bg").attr("title"));
 			if($(this).hasClass("h")){
-				dealList(data,true,function(){
+				rank(data,true,function(){
 					selFun(data, appendHtml, "tbody");
 				})
+		$("tbody tr").each(function(){
+			if(parseInt($(this).attr("title")) == ind){
+				$(this).addClass("bg").siblings("tr").removeClass("bg");
+			}
+		})
 				$(this).removeClass("h");
 			}else{
-				dealList(data,false,function(){
+				rank(data,false,function(){
 					selFun(data, appendHtml, "tbody");
 				})
+		$("tbody tr").each(function(){
+			if(parseInt($(this).attr("title")) == ind){
+				$(this).addClass("bg").siblings("tr").removeClass("bg");
+			}
+		})
 				$(this).addClass("h");
 			}
 		})
 			
 	//键盘背景色	
 	$("tbody tr").eq(0).addClass("bg").siblings("tr").removeClass("bg");
+		var index;
 	$(window).keydown(function(e){
 		var key = e.keyCode;
+	
 		switch(key){
 		    case 38:
 				index = $("tr.bg").index();
@@ -144,10 +157,15 @@
 				}
 				$("tbody tr").eq(index).addClass("bg").siblings("tr").removeClass("bg");				
 			break;
-/*			case 8:
+			case 46:
 				var id = parseInt($("tbody tr.bg").attr("title"));
-			    delFun(id)
-			break;*/
+			   for(var i = 0 ; i < data.length ; i++){
+					if( id == data[i].id){
+						data.splice(i,1);
+						$("tbody tr").eq(i).remove();
+				}		
+			}
+			break;
 		}
 	})
 		
