@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>tableRight</title>
+</head>
+<link rel="stylesheet" href="css/tableright.css">
+
+<body>
+	分类：<input class="con classify" type="text"> 标题：
+	<input class="con headline" type="text"> 班级：
+	<input class="con class" type="text"> 状态：
+	<input class="con state" type="text"> 创建时间：
+	<input class="con time" type="text"> 创建者：
+	<input class="con person" type="text"> 分校地区：
+	<input class="con area" type="text">
+	<input class="inp1" type="button" value="录入"><span class="err">信息有误</span>
+	<table>
+		<thead>
+			<th><input type="checkbox"> ID <span class="up">排序</span></th>
+			<th>分类</th>
+			<th>标题</th>
+			<th>班级</th>
+			<th>状态</th>
+			<th>创建时间</th>
+			<th>创建者</th>
+			<th>分校地区</th>
+			<th>功能</th>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
+	<input class="inp2" type="button" value="删除">
+</body>
+
+</html>
+<script src="js/jquery.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/module.js"></script>
+<script>
+	$(function() {
+		// 初始化渲染页面
+		selFun(data, appendHtml, "tbody");
+
+		// 点击录入内容
+		var classNames = { // 所有输入框class名
+			classify: '.classify',
+			headline: '.headline',
+			class: '.class',
+			state: '.state',
+			time: '.time',
+			person: '.person',
+			area: '.area'
+		};
+
+		$(".inp1").on("click", function() {
+			var val;
+			if (empTest(classNames, ".err")) {
+				val = empTest(classNames, ".err");
+				val['id'] = getId(data) + 1;
+				data.push(val);
+				selFun([val], appendHtml, "tbody");
+				empInp(classNames);
+			};
+		})
+
+		//修改表格中的内容
+		$("td").each(function(){
+			$(this).on("click",function(){
+				$("td input[type='text']").attr("checked","checked");
+			})			
+		})
+
+		//删除行
+		$("body").on("click",".del",function(){
+			var id = parseInt($(this).attr("title"));
+			var ind = $(this).parent("td").parent("tr").index();
+			for(var i = 0 ; i < data.length ; i++){
+				if( id == data[i].id){
+					data.splice(i,1);
+					$("tbody tr").eq(ind).remove();
+				}		
+			}
+		})
+		
+	//排序
+		function dealList(data,status,fun){
+			if(status){
+				var emp;
+				for(var i = 0;i< data.length;i++){
+					for(var j = 0 ;j< data.length;j++){
+						if( data[i].id > data[j].id){
+							emp = data[i];
+							data[i] = data[j];
+							data[j]= emp;
+						}
+					}
+				}
+			}else{
+				for(var i = 0;i< data.length;i++){
+					for(var j = 0 ;j< data.length;j++){
+						if( data[i].id < data[j].id){
+							emp = data[i];
+							data[i] = data[j];
+							data[j]= emp;
+						}
+					}
+				}				
+			}
+				fun();
+		}
+		
+		$(".up").on("click",function(){
+			if($(this).hasClass("h")){
+				dealList(data,true,function(){
+					selFun(data, appendHtml, "tbody");
+				})
+				$(this).removeClass("h");
+			}else{
+				dealList(data,false,function(){
+					selFun(data, appendHtml, "tbody");
+				})
+				$(this).addClass("h");
+			}
+		})
+			
+	//键盘背景色	
+	$("tbody tr").eq(0).addClass("bg").siblings("tr").removeClass("bg");
+	$(window).keydown(function(e){
+		var key = e.keyCode;
+		switch(key){
+		    case 38:
+				index = $("tr.bg").index();
+				if(index > 0){
+					index --;
+				}
+				$("tbody tr").eq(index).addClass("bg").siblings("tr").removeClass("bg");
+			break;
+			case 40:
+				index = $("tr.bg").index();
+				if(index < $('tbody tr').length - 1){
+					index ++;
+				}
+				$("tbody tr").eq(index).addClass("bg").siblings("tr").removeClass("bg");				
+			break;
+/*			case 8:
+				var id = parseInt($("tbody tr.bg").attr("title"));
+			    delFun(id)
+			break;*/
+		}
+	})
+		
+		
+	})
+
+</script>

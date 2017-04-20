@@ -1,0 +1,82 @@
+	* {
+		padding: 0;
+		margin: 0;
+	}
+
+	html,
+	body {
+		height: 100%;
+		font-family: '微软雅黑'；
+	}
+
+	input {
+		outline: none;
+	}
+
+	.con {
+		height: 20px;
+		width: 7%;
+		margin: 5px;
+	}
+
+
+.del{
+	width: 80%;
+	height: 80%;
+	background: red;
+}
+
+.err{
+	color: red;
+	font-size: 12px;
+	display: none;
+}
+	table {
+		width: 100%;
+		height: auto;
+		border-collapse: collapse;
+		margin: 10px 0 40px 0;
+	}
+	table input[type='text'] {
+			background: none;
+			width: 100px;
+			height: 40px;
+			border: none;
+			outline: none;
+			text-align: center;
+		}
+	th {
+		height: 40px;
+		color: #ffffff;
+		background: #333333;
+		border: 1px solid #cccccc;
+	}
+
+	td {
+		text-align: center;
+		border: 1px solid #cccccc;
+		height: 40px;
+		color: #1c1c1c;
+		font-size: 14px;
+	}
+		tbody tr.bg{
+			background: #333;
+			color: #fff;
+		}
+		
+		tbody tr.bg td input[type='text']{
+			color: #fff; 
+		}
+		tbody tr.bg td span{
+			color: #fff; 
+		}
+	tr:hover {
+		background: #f2ebeb;
+	}
+	.inp2 {
+		float: right;
+		margin: 10px;
+		width: 50px;
+		background: red;
+	}
+
