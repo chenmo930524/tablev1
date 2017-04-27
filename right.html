@@ -8,17 +8,17 @@
 <link rel="stylesheet" href="css/tableright.css">
 
 <body>
-	分类：<input class="con classify" type="text"> 标题：
-	<input class="con headline" type="text"> 班级：
-	<input class="con class" type="text"> 状态：
-	<input class="con state" type="text"> 创建时间：
-	<input class="con time" type="text"> 创建者：
-	<input class="con person" type="text"> 分校地区：
-	<input class="con area" type="text">
+	分类：<input class="con classify" type="text"> 
+	标题：<input class="con headline" type="text"> 
+	班级：<input class="con class" type="text">
+	状态：<input class="con state" type="text"> 
+	创建时间：<input class="con time" type="text">
+	创建者：<input class="con person" type="text"> 
+	分校地区：<input class="con area" type="text">
 	<input class="inp1" type="button" value="录入"><span class="err">信息有误</span>
 	<table>
 		<thead>
-			<th><input type="checkbox"> ID <span class="up">排序</span></th>
+			<th><input type="checkbox" class="allchk"> ID <span class="up">排序</span></th>
 			<th>分类</th>
 			<th>标题</th>
 			<th>班级</th>
@@ -40,12 +40,13 @@
 <script src="js/table.js"></script>
 <script>
 	$(function() {
-		// 初始化渲染页面
-		selFun(data, appendHtml, "tbody");
+		// 初始化
+		selHtml(data, Html_, "tbody");
 
-		// 点击录入内容
-		var classNames = { // 所有输入框class名
+		// 录入数据内容
+		var inputNames = { // 所有输入框class名
 			classify: '.classify',
+			headline: '.headline',
 			headline: '.headline',
 			class: '.class',
 			state: '.state',
@@ -56,120 +57,192 @@
 
 		$(".inp1").on("click", function() {
 			var val;
-			if (empInput(classNames, ".err")) {
-				val = empInput(classNames, ".err");
-				val['id'] = getId(data) + 1;
+			if (Input_(inputNames, ".err")) {
+				val = Input_(inputNames, ".err");
+				val.id = getId(data) + 1;
 				data.push(val);
-				selFun([val], appendHtml, "tbody");
-				empInp(classNames);
+				selHtml([val], Html_, "tbody");
+				clear(inputNames);
 			};
 		})
 
 		//修改表格中的内容
-		$("td").each(function(){
-			$(this).on("click",function(){
-				$("td input[type='text']").attr("checked","checked");
-			})			
+		$("td").each(function() {
+			$(this).on("click", function() {
+				$("td input[type='text']").attr("checked", "checked");
+			})
 		})
 
-		//删除行
-		$("body").on("click",".del",function(){
+		//删除单行
+		$("body").on("click", ".del", function() {
 			var id = parseInt($(this).attr("title"));
 			var ind = $(this).parent("td").parent("tr").index();
-			for(var i = 0 ; i < data.length ; i++){
-				if( id == data[i].id){
-					data.splice(i,1);
+			for (var i = 0; i < data.length; i++) {
+				if (id == data[i].id) {
+					data.splice(i, 1);
 					$("tbody tr").eq(ind).remove();
-				}		
-			}
-		})
-		
-	//排序
-		function rank(data,status,fun){
-			if(status){
-				var emp;
-				for(var i = 0;i< data.length;i++){
-					for(var j = 0 ;j< data.length;j++){
-						if( data[i].id > data[j].id){
-							emp = data[i];
-							data[i] = data[j];
-							data[j]= emp;
-						}
-					}
 				}
-			}else{
-				for(var i = 0;i< data.length;i++){
-					for(var j = 0 ;j< data.length;j++){
-						if( data[i].id < data[j].id){
-							emp = data[i];
-							data[i] = data[j];
-							data[j]= emp;
-						}
+			}
+		})
+
+
+		//批量删除
+		var zz = [];
+		$("body").on("click", ".chk", function() {
+			var id = parseInt($(this).siblings("span").text());
+			if ($(this).hasClass("h")) {
+				$.each(zz, function(key, val) {
+					if (val == id) {
+						zz.splice(key, 1);
 					}
-				}				
-			}
-				fun();
-		}
-		
-		$(".up").on("click",function(){
-			var ind = parseInt($("tr.bg").attr("title"));
-			if($(this).hasClass("h")){
-				rank(data,true,function(){
-					selFun(data, appendHtml, "tbody");
 				})
-		$("tbody tr").each(function(){
-			if(parseInt($(this).attr("title")) == ind){
-				$(this).addClass("bg").siblings("tr").removeClass("bg");
-			}
-		})
+			
+				$(".allchk").removeAttr("checked").removeClass("h");
 				$(this).removeClass("h");
-			}else{
-				rank(data,false,function(){
-					selFun(data, appendHtml, "tbody");
-				})
-		$("tbody tr").each(function(){
-			if(parseInt($(this).attr("title")) == ind){
-				$(this).addClass("bg").siblings("tr").removeClass("bg");
+			} else {
+				zz.push(id);
+				$(this).addClass("h")
+				if (zz.length == $("tbody tr").length) {
+					$(".allchk").addClass("h").attr("checked", true);
+				}
 			}
 		})
+
+		$(".allchk").on("click", function() {
+			if ($(this).hasClass("h")) {
+			
+				$(".chk").removeClass("h").removeAttr("checked");
+				$(this).removeClass("h");
+			} else {
+			
+				$(".chk").addClass("h").attr("checked", true);
 				$(this).addClass("h");
 			}
 		})
-			
-	//键盘背景色	
-	$("tbody tr").eq(0).addClass("bg").siblings("tr").removeClass("bg");
-		var index;
-	$(window).keydown(function(e){
-		var key = e.keyCode;
-	
-		switch(key){
-		    case 38:
-				index = $("tr.bg").index();
-				if(index > 0){
-					index --;
-				}
-				$("tbody tr").eq(index).addClass("bg").siblings("tr").removeClass("bg");
-			break;
-			case 40:
-				index = $("tr.bg").index();
-				if(index < $('tbody tr').length - 1){
-					index ++;
-				}
-				$("tbody tr").eq(index).addClass("bg").siblings("tr").removeClass("bg");				
-			break;
-			case 46:
-				var id = parseInt($("tbody tr.bg").attr("title"));
-			   for(var i = 0 ; i < data.length ; i++){
-					if( id == data[i].id){
-						data.splice(i,1);
-						$("tbody tr").eq(i).remove();
-				}		
-			}
-			break;
-		}
-	})
-		
-		
-	})
 
+		$(".inp2").on("click", function() {
+			if ($(".allchk").hasClass("h")) {
+				$("tbody tr").remove();
+				data = [];
+			} else {
+				$.each(zz, function(key, val) {
+					for (var i = 0; i < data.length; i++) {
+						if (val == data[i].id) {
+							data.splice(i, 1);
+							$("tbody tr").eq(i).remove();
+						}
+					}
+				})
+			}
+
+			zz = [];
+		})
+
+
+		//排序
+		function rank(data, status, fun) {
+			if (status) {
+				var emp;
+				for (var i = 0; i < data.length; i++) {
+					for (var j = 0; j < data.length; j++) {
+						if (data[i].id > data[j].id) {
+							emp = data[i];
+							data[i] = data[j];
+							data[j] = emp;
+						}
+					}
+				}
+			} else {
+				for (var i = 0; i < data.length; i++) {
+					for (var j = 0; j < data.length; j++) {
+						if (data[i].id < data[j].id) {
+							emp = data[i];
+							data[i] = data[j];
+							data[j] = emp;
+						}
+					}
+				}
+			}
+			fun();
+		}
+
+		$(".up").on("click", function() {
+			var ind = parseInt($("tr.bg").attr("title"));
+			if ($(this).hasClass("h")) {
+				rank(data, true, function() {
+					selHtml(data, Html_, "tbody");
+				})
+				$("tbody tr").each(function() {
+					if (parseInt($(this).attr("title")) == ind) {
+						$(this).addClass("bg").siblings("tr").removeClass("bg");
+					}
+				})
+				$(this).removeClass("h");
+			} else {
+				rank(data, false, function() {
+					selHtml(data, Html_, "tbody");
+				})
+				$("tbody tr").each(function() {
+					if (parseInt($(this).attr("title")) == ind) {
+						$(this).addClass("bg").siblings("tr").removeClass("bg");
+					}
+				})
+				$(this).addClass("h");
+			}
+		})
+
+		//键盘背景色	
+		$("tbody tr").eq(0).addClass("bg").siblings("tr").removeClass("bg");
+		var index;
+		$(window).keydown(function(e) {
+			var key = e.keyCode;
+			switch (key) {
+				case 38:
+					index = $("tr.bg").index();
+					if (index > 0) {
+						index--;
+					}
+					$("tbody tr").eq(index).addClass("bg").siblings("tr").removeClass("bg");
+					break;
+				case 40:
+					index = $("tr.bg").index();
+					if (index < $('tbody tr').length - 1) {
+						index++;
+					}
+					$("tbody tr").eq(index).addClass("bg").siblings("tr").removeClass("bg");
+					break;
+				case 46:
+					var id = parseInt($("tbody tr.bg").attr("title"));
+					for (var i = 0; i < data.length; i++) {
+						if (id == data[i].id) {
+							data.splice(i, 1);
+							$("tbody tr").eq(i).remove();
+							$("tbody tr").eq(0).addClass("bg").siblings("tr").removeClass("bg");
+						}
+					}
+					break;
+
+				case 13:
+					index = parseInt($("tr.bg").attr("title"));
+					var j = $("tbody tr").eq(index - 1).children("td").eq(0).children("input");
+					if (j.hasClass("h")) {
+						$.each(zz, function(key, val) {
+							if (val == index) {
+								zz.splice(key, 1);
+							}
+						})
+						j.removeAttr("checked");
+						$(".allchk").removeAttr("checked").removeClass("h");
+						j.removeClass("h");
+					} else {
+						zz.push(index);
+						j.attr("checked", true);
+						j.addClass("h");
+						if (zz.length == $("tbody tr").length) {
+							$(".allchk").addClass("h").attr("checked", true);
+						}
+					}
+			}
+		})
+	})
 </script>

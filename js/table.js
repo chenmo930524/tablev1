@@ -1,9 +1,9 @@
 	// 页面渲染模块
 	// 渲染方法
-	function appendHtml(datas){
+	function Html_(datas){
 		var html_ = '<tr title="'+ datas.id +'">'+
 						'<td>' +
-							'<input type="checkbox" class="ckbox">' +
+							'<input type="checkbox" class="chk" title="'+ datas.id +'">' +
 							'<span>'+ datas.id +'</span>' +
 						'</td>' +
 						'<td>' +
@@ -33,8 +33,8 @@
 					'</tr>';
 		return html_;
 	}	
-	// 选择性渲染
-	function selFun(datas, fun, name){
+	// 渲染方式
+	function selHtml(datas, fun, name){
 		if(datas.length == 1){
 			$(name).append(fun(datas[0]));  // 添加一条记录
 		} else {
@@ -45,7 +45,7 @@
 		}
 	}
 	// 录入为空判断模块
-    function empInput(names, error){
+    function Input_(names, error){
 		var status = 0;
 	
 		$.each(names, function(key, val){
@@ -75,7 +75,7 @@
 		status = 0; 
 	}		
 	// 清空输入框
-	function empInp(names){
+	function clear(names){
 		$.each(names, function(key, val){
 			$(val).val("");
 		})		
